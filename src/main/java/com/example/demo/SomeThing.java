@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
