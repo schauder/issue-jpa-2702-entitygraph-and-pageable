@@ -1,10 +1,13 @@
 package com.example.demo;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -24,7 +27,12 @@ class PageableWithEntityGraphTest {
 	@Autowired
 	EntityManager em;
 
-	private void setup() {
+	@BeforeEach
+	void setup() {
+
+		em.createQuery("delete OtherThing").executeUpdate();
+		em.createQuery("delete SomeThing").executeUpdate();
+
 		for (int i = 0; i < 100; i++) {
 			SomeThing someThing = new SomeThing("Thing " + i);
 			someThing.addOtherThing(new OtherThing("Thing " + i + " child a"));
@@ -36,7 +44,6 @@ class PageableWithEntityGraphTest {
 
 	@Test
 	void doThings() {
-		setup();
 
 		Page<SomeThing> thingsPage = someThingRepository.findAll(Pageable.ofSize(10));
 
@@ -49,9 +56,8 @@ class PageableWithEntityGraphTest {
 
 	@Test
 	void doThingsWithEntityManager() {
-		setup();
 		TypedQuery<SomeThing> query = em.createQuery("select st from SomeThing st", SomeThing.class);
-		query.setHint("jakarta.persistence.loadgraph", em.getEntityGraph("SomeThing.graph"));
+		query.setHint("javax.persistence.loadgraph", em.getEntityGraph("SomeThing.graph"));
 		List<SomeThing> tenThings = query.setMaxResults(10).getResultList();
 		assertThat(tenThings).hasSize(10);
 	}
