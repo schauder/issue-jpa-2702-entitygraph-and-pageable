@@ -1,0 +1,3 @@
+== Reproducer for a Hibernate issue combining entitygraph and max results.
+
+The issue was originally filed as https://github.com/spring-projects/spring-data-jpa/issues/2702 against Spring Data JPA.
